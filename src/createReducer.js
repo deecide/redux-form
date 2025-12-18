@@ -177,7 +177,10 @@ function createReducer<M, L>(structure: Structure<M, L>) {
     },
     [BLUR](state, { meta: { field, touch }, payload }) {
       let result = state
-      if (payload !== undefined) {
+      const initial = getIn(state, `initial.${field}`)
+      if (initial === undefined && payload === '') {
+        result = deleteInWithCleanUp(result, `values.${field}`)
+      } else if (payload !== undefined) {
         result = setIn(result, `values.${field}`, payload)
       }
       if (field === getIn(result, 'active')) {
